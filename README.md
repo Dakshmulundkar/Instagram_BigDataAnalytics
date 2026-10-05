@@ -65,6 +65,24 @@ dashboard/app.R
 report/mini_project_report_outline.md
 ppt/mini_project_ppt_outline.md
 
+## Clone from GitHub (teammates)
+
+Prerequisites (once per machine): R, Java 11 or 17, Spark 3.5.x or 4.x,
+**Git LFS** (the 151 MB Parquet exceeds GitHub's 100 MB plain-file limit, so it
+is stored with LFS — plain `git clone` without LFS gives you a 1 KB pointer
+instead of the data):
+```powershell
+git lfs install
+git clone <your-repo-url>
+cd InstaPulse_Group_Submission
+$env:JAVA_HOME  = "<your-java-folder>"
+$env:SPARK_HOME = "<your-spark-folder>"
+$env:R_HOME     = "<your-R-folder>"
+```
+Then continue from step 4 of "How to run on Windows" above (install R packages,
+run `R\06_run_all.R`, launch the dashboard). Generated outputs (`results/`,
+`data/processed/`) are git-ignored and recreated by the pipeline.
+
 ## How to run on Windows (PowerShell)
 
 Steps to run InstaPulse:
