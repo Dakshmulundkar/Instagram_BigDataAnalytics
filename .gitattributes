@@ -1,0 +1,2 @@
+# Large Parquet dataset versioned with Git LFS (GitHub blocks plain files >100MB).
+*.parquet filter=lfs diff=lfs merge=lfs -text

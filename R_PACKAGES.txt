@@ -1,0 +1,11 @@
+Required R packages:
+dplyr
+ggplot2
+shiny
+DT
+
+Optional:
+plotly
+
+Install:
+install.packages(c("dplyr","ggplot2","shiny","DT","plotly"))

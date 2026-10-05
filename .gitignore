@@ -1,0 +1,23 @@
+# R session junk
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+D/
+
+# Generated outputs (recreated by running the pipeline: source("R/06_run_all.R"))
+# - data/processed/ : cleaned sample written by 02_preprocessing.R
+# - results/        : Spark aggregates, Bloom files, figures from 03/04/05
+data/processed/
+results/
+
+# NOTE: datasets under data/raw/ ARE committed (the 151 MB Parquet goes
+# through Git LFS, see .gitattributes; the 1K CSV is a normal small file).
