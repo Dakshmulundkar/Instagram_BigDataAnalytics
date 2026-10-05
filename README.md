@@ -73,28 +73,30 @@ is stored with LFS — plain `git clone` without LFS gives you a 1 KB pointer
 instead of the data):
 ```powershell
 git lfs install
-git clone <your-repo-url>
-cd InstaPulse_Group_Submission
-$env:JAVA_HOME  = "<your-java-folder>"
-$env:SPARK_HOME = "<your-spark-folder>"
-$env:R_HOME     = "<your-R-folder>"
+git clone https://github.com/Dakshmulundkar/Instagram_BigDataAnalytics.git
+cd Instagram_BigDataAnalytics
+$env:JAVA_HOME  = "<path-to-your-java-folder>"
+$env:SPARK_HOME = "<path-to-your-spark-folder>"
+$env:R_HOME     = "<path-to-your-R-folder>"
 ```
-Then continue from step 4 of "How to run on Windows" above (install R packages,
-run `R\06_run_all.R`, launch the dashboard). Generated outputs (`results/`,
+(Replace the `<...>` paths with your own install locations, e.g. wherever you
+installed R, Java, and Spark — any drive or folder works.)
+Then continue from step 4 of "How to run on Windows" below (install R packages,
+run the pipeline, launch the dashboard). Generated outputs (`results/`,
 `data/processed/`) are git-ignored and recreated by the pipeline.
 
 ## How to run on Windows (PowerShell)
 
 Steps to run InstaPulse:
-1. Extract the ZIP anywhere.
+1. Get the project: either clone it (see above) or extract the ZIP anywhere.
 2. Install R, Java (11 or 17), and Spark (3.5.x or 4.x).
-3. Open PowerShell and point to your installs (adjust these paths to your machine —
-   example below uses this machine's locations):
+3. Open PowerShell, go to the project folder, and point to your installs
+(replace the `<...>` paths with your own locations — any drive works):
 ```powershell
-cd "D:\InstaPulse_Group_Submission"
-$env:JAVA_HOME  = "D:\Java\jdk-17.0.17+10"
-$env:SPARK_HOME = "D:\Programs\Spark\spark-4.2.0-bin-hadoop3"
-$env:R_HOME     = "D:\Programs\R\R-4.6.1"
+cd "<path-to-the-project-folder>"
+$env:JAVA_HOME  = "<path-to-your-java-folder>"
+$env:SPARK_HOME = "<path-to-your-spark-folder>"
+$env:R_HOME     = "<path-to-your-R-folder>"
 ```
 4. Install R packages (first time only):
 ```powershell
