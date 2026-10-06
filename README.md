@@ -65,67 +65,106 @@ dashboard/app.R
 report/mini_project_report_outline.md
 ppt/mini_project_ppt_outline.md
 
-## Clone from GitHub (teammates)
+## Quick Start
 
-Prerequisites (once per machine): R, Java 11 or 17, Spark 3.5.x or 4.x,
-**Git LFS** (the 151 MB Parquet exceeds GitHub's 100 MB plain-file limit, so it
-is stored with LFS — plain `git clone` without LFS gives you a 1 KB pointer
-instead of the data):
+The primary Parquet dataset is stored with Git LFS. Install Git LFS before
+cloning, then run `git lfs pull` to fetch the actual dataset. Downloading the
+GitHub ZIP instead of cloning may leave you with an LFS pointer rather than the
+data file. The 1,000-row CSV is a fallback/demo dataset; it is not merged with
+the primary dataset.
+
+SparkR is included in the Apache Spark distribution. The commands below install
+Spark locally inside the project and set `SPARK_HOME` from that known location;
+you do not need to edit installation paths or set `JAVA_HOME` or `R_HOME`.
+Use Java 17 and Spark 3.5.6 for the tested setup. Keep the same terminal open
+while running the pipeline and dashboard.
+
+### Windows (PowerShell)
+
+Install R, Java, Git, and Git LFS once. These commands use Windows Package
+Manager (`winget`):
+
+```powershell
+winget install --id RProject.R --exact
+winget install --id EclipseAdoptium.Temurin.17.JDK --exact
+winget install --id Git.Git --exact
+winget install --id GitHub.GitLFS --exact
+```
+
+Close and reopen PowerShell so the installed commands are available, then get
+the project and its dataset:
+
 ```powershell
 git lfs install
 git clone https://github.com/Dakshmulundkar/Instagram_BigDataAnalytics.git
+Set-Location Instagram_BigDataAnalytics
+git lfs pull
+```
+
+Download and unpack the Spark distribution into the project. `SPARK_HOME` is
+derived from the extracted folder automatically:
+
+```powershell
+New-Item -ItemType Directory -Force .tools | Out-Null
+Invoke-WebRequest -Uri https://archive.apache.org/dist/spark/spark-3.5.6/spark-3.5.6-bin-hadoop3.tgz -OutFile .tools\spark.tgz
+tar -xzf .tools\spark.tgz -C .tools
+$env:SPARK_HOME = (Resolve-Path .tools\spark-3.5.6-bin-hadoop3).Path
+```
+
+Install the R packages, run the pipeline, then launch the dashboard:
+
+```powershell
+Rscript -e "install.packages(c('dplyr','ggplot2','shiny','DT'), repos='https://cloud.r-project.org')"
+Rscript .\R\06_run_all.R
+Rscript -e "shiny::runApp('dashboard', launch.browser=TRUE)"
+```
+
+### Ubuntu
+
+Install R, Java 17, Git LFS, and the system libraries used to install R packages:
+
+```bash
+sudo apt update
+sudo apt install -y r-base openjdk-17-jdk git git-lfs curl tar build-essential libcurl4-openssl-dev libssl-dev libxml2-dev
+```
+
+Clone the project and fetch its LFS dataset:
+
+```bash
+git lfs install
+git clone https://github.com/Dakshmulundkar/Instagram_BigDataAnalytics.git
 cd Instagram_BigDataAnalytics
-$env:JAVA_HOME  = "<path-to-your-java-folder>"
-$env:SPARK_HOME = "<path-to-your-spark-folder>"
-$env:R_HOME     = "<path-to-your-R-folder>"
+git lfs pull
 ```
-(Replace the `<...>` paths with your own install locations, e.g. wherever you
-installed R, Java, and Spark — any drive or folder works.)
-Then continue from step 4 of "How to run on Windows" below (install R packages,
-run the pipeline, launch the dashboard). Generated outputs (`results/`,
-`data/processed/`) are git-ignored and recreated by the pipeline.
 
-## How to run on Windows (PowerShell)
+Download and unpack Spark locally, then set `SPARK_HOME` from the extracted
+folder:
 
-Steps to run InstaPulse:
-1. Get the project: either clone it (see above) or extract the ZIP anywhere.
-2. Install R, Java (11 or 17), and Spark (3.5.x or 4.x).
-3. Open PowerShell, go to the project folder, and point to your installs
-(replace the `<...>` paths with your own locations — any drive works):
-```powershell
-cd "<path-to-the-project-folder>"
-$env:JAVA_HOME  = "<path-to-your-java-folder>"
-$env:SPARK_HOME = "<path-to-your-spark-folder>"
-$env:R_HOME     = "<path-to-your-R-folder>"
+```bash
+mkdir -p .tools
+curl -fL https://archive.apache.org/dist/spark/spark-3.5.6/spark-3.5.6-bin-hadoop3.tgz -o .tools/spark.tgz
+tar -xzf .tools/spark.tgz -C .tools
+export SPARK_HOME="$PWD/.tools/spark-3.5.6-bin-hadoop3"
 ```
-4. Install R packages (first time only):
-```powershell
-& "$env:R_HOME\bin\Rscript.exe" -e "install.packages(c('dplyr','ggplot2','shiny','DT'), repos='https://cloud.r-project.org')"
-```
-SparkR comes from your Spark install — never install it from CRAN.
-5. Run the full pipeline (from the project root):
-```powershell
-& "$env:R_HOME\bin\Rscript.exe" "R\06_run_all.R"
-```
-This runs ingestion → preprocessing → Spark analytics → Bloom Filter →
-visualizations. Expected at the end: `total_posts=605868`,
-`unique_users=485125`, Bloom false negatives 0.
-6. Launch the dashboard:
-```powershell
-& "$env:R_HOME\bin\Rscript.exe" -e "shiny::runApp('dashboard', launch.browser=TRUE)"
-```
-7. The InstaPulse dashboard opens in the browser. Use the left-pane filters
-(Post Type / Business Account / Description Category) — every tab updates instantly.
 
-Or, in R/RStudio instead of PowerShell: set working directory to the project
-root, then `source("R/06_run_all.R")` followed by `shiny::runApp("dashboard")`.
+Install the R packages, run the pipeline, then launch the dashboard:
 
-The dataset is already included (`data/raw/main_instagram/main_instagram.parquet`,
-605,868 rows; plus the 1K fallback CSV), so no separate download is needed.
+```bash
+Rscript -e "install.packages(c('dplyr','ggplot2','shiny','DT'), repos='https://cloud.r-project.org')"
+Rscript R/06_run_all.R
+Rscript -e "shiny::runApp('dashboard', launch.browser=TRUE)"
+```
 
-Notes: `winutils`/NativeIO warnings during Spark steps are expected and harmless
-(small results use the built-in fallback automatically). Keep Java 11/17 —
-Spark 3.5.x/4.x do not need a separate Hadoop install for this project.
+For both systems, the pipeline runs ingestion → preprocessing → Spark analytics
+→ Bloom Filter → visualizations. On the primary dataset, expect
+`total_posts=605868`, `unique_users=485125`, and zero Bloom false negatives.
+The dashboard starts in the browser after the final command. To run it later,
+open a terminal in the project folder, set `SPARK_HOME` to the local `.tools`
+Spark folder as above, and run the dashboard command again.
+
+SparkR comes from Spark; do not install it from CRAN. Windows `winutils` or
+NativeIO warnings can occur during Spark writes; the pipeline has a fallback
+for its small output files. No separate Hadoop installation is required.
 
 ## Viva one-line explanation
 
@@ -133,10 +172,8 @@ Spark 3.5.x/4.x do not need a separate Hadoop install for this project.
 
 ## Scope decision
 
-This is large-scale (~606K records) but NOT petabyte/internet-scale Big Data,
-and we deliberately do NOT claim:
-
-Because this is a subject mini project, we deliberately do NOT claim:
+This is large-scale (~606K records) but NOT petabyte/internet-scale Big Data.
+We deliberately do NOT claim:
 - live Instagram monitoring
 - unrestricted Instagram scraping
 - complete image-archive processing

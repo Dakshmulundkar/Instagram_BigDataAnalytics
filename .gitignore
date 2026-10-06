@@ -18,6 +18,7 @@ D/
 # - results/        : Spark aggregates, Bloom files, figures from 03/04/05
 data/processed/
 results/
+.tools/
 
 # NOTE: datasets under data/raw/ ARE committed (the 151 MB Parquet goes
 # through Git LFS, see .gitattributes; the 1K CSV is a normal small file).
