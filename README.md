@@ -97,7 +97,7 @@ the project and its dataset:
 ```powershell
 git lfs install
 git clone https://github.com/Dakshmulundkar/Instagram_BigDataAnalytics.git
-Set-Location Instagram_BigDataAnalytics
+cd Instagram_BigDataAnalytics
 git lfs pull
 ```
 
